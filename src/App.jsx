@@ -54,17 +54,26 @@ function App() {
       ) : (
     <>
       <div className="list-container">
-        {paginatedList.map((item, index) => (
-          <div key={index} className="list-item">
-            <div className="item-number">S.No: {item["s.no"]}</div>
-            <div className="item-funded">
-              Percentage Funded: {item["percentage.funded"]}%
-            </div>
-            <div className="item-pledged">
-              Amount Pledged: ${item["amt.pledged"]}
-            </div>
+      <div className="list-header">
+        <div className="header-item">S.No</div>
+        <div className="header-item">Percentage Funded</div>
+        <div className="header-item">Amount Pledged</div>
+      </div>
+      {paginatedList.map((item, index) => (
+        <div key={index} className="list-row">
+          <div className="row-item">{item["s.no"] + 1}</div>
+          <div
+            className={`row-item percentage ${
+              item["percentage.funded"] >= 1000 ? "success" : "warning"
+            }`}
+          >
+            {item["percentage.funded"]}%
           </div>
-        ))}
+          <div className="row-item amount">
+            ${item["amt.pledged"].toLocaleString()}
+          </div>
+        </div>
+      ))}
       </div>
       <div className="pagination-container">
         <button
