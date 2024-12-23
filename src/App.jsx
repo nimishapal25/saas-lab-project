@@ -7,13 +7,26 @@ const PER_PAGE = 5
 function App() {
   const [list, setList] = useState([])
   const [currentPage, setCurrentPage] = useState(1)
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
   
   useEffect(() => {
     async function fetchData() {
-      const res = await fetch('https://raw.githubusercontent.com/saaslabsco/frontend-assignment/refs/heads/master/frontend-assignment.json')
-      const data = await res.json()
-      setList(data)
-    }
+      setLoading(true)
+      setError('') //Reset Error message before calling API
+      try {
+        const res = await fetch('https://raw.githubusercontent.com/saaslabsco/frontend-assignment/refs/heads/master/frontend-assignment.json')
+        if (!res.ok) {
+          throw new Error("Failed to fetch data. Please try again later.");
+        }
+        const data = await res.json()
+        setList(data)
+      } catch (error) {
+        setError(error.message);
+      } finally {
+        setLoading(false); // Hide loader after data is fetched
+      }
+    } 
     fetchData()
   },[])
 
@@ -34,6 +47,12 @@ function App() {
 
   return (
     <div className="app-container">
+  {loading ? (
+        <div className="loader">Loading...</div>
+      ) : error ? (
+        <div className="error">{error}</div>
+      ) : (
+    <>
       <div className="list-container">
         {paginatedList.map((item, index) => (
           <div key={index} className="list-item">
@@ -66,7 +85,10 @@ function App() {
           Next
         </button>
       </div>
-    </div>
+    </>
+  )}
+</div>
+
   )
 }
 
